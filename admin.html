@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KM Parfums | بوابة الإدارة والتحكم الملكية الشاملة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-deep: #161814;
+      --bg-gradient: radial-gradient(circle at 50% 20%, #292d22 0%, #1e221a 50%, #121410 100%);
+      --sidebar-bg: #191c14;
+      --card-bg: rgba(41, 45, 34, 0.65);
+      --card-inner: rgba(22, 24, 20, 0.85);
+      --olive-dark: #292d22;
+      --olive-deep: #424b32;
+      --sand-gold: #a6a078;
+      --sand-light: #c2bc95;
+      --cream: #f1ebdd;
+      --text: #f1ebdd;
+      --text-muted: #b5b19c;
+      --border-gold: rgba(166, 160, 120, 0.35);
+      --border-soft: rgba(241, 235, 221, 0.12);
+      --gold: #a6a078;
+      --gold-light: #c2bc95;
+      --burgundy: #424b32;
+      --tiger-amber: #292d22;
+      --border: rgba(166, 160, 120, 0.35);
+      --success: #25d366;
+      --danger: #cf4d4d;
+      --warning: #e09f22;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg-deep);
+      background-image: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* شاشة تسجيل الدخول المشفّرة */
+    #lockScreen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #292d22 0%, #121410 90%);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .lock-box {
+      background: rgba(30, 34, 26, 0.9);
+      border: 1px solid var(--gold);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(15px);
+    }
+    .lock-box .brand {
+      font-family: 'Amiri', serif;
+      font-size: 3.2rem;
+      color: var(--gold-light);
+      margin-bottom: 0.2rem;
+    }
+    .lock-box p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+    .lock-input {
+      width: 100%;
+      padding: 1rem;
+      background: #0f110d;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--gold-light);
+      text-align: center;
+      font-size: 1.2rem;
+      letter-spacing: 4px;
+      margin-bottom: 1.2rem;
+      outline: none;
+    }
+    .lock-input:focus { border-color: var(--gold); }
+    .btn-unlock {
+      width: 100%;
+      background: linear-gradient(135deg, var(--olive-deep), var(--olive-dark));
+      border: 1px solid var(--border-gold);
+      color: #fff;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-unlock:hover { opacity: 0.95; transform: translateY(-2px); }
+
+    /* الهيكل العام وتجاوب الجوال */
+    .dashboard-layout {
+      display: none;
+      min-height: 100vh;
+      position: relative;
+    }
+    .mobile-header {
+      display: none;
+      background: rgba(25, 28, 20, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .mobile-header h2 {
+      font-family: 'Amiri', serif;
+      color: var(--gold);
+      font-size: 1.6rem;
+    }
+    .hamburger-btn {
+      background: transparent;
+      border: none;
+      color: var(--gold);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: rgba(25, 28, 20, 0.95);
+      border-left: 1px solid var(--border);
+      padding: 2rem 1.2rem;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 1001;
+      backdrop-filter: blur(15px);
+      transition: transform 0.3s ease;
+    }
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 1rem;
+    }
+    .sidebar-header h2 {
+      font-family: 'Amiri', serif;
+      color: var(--gold);
+      font-size: 2.2rem;
+    }
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      text-align: right;
+      font-size: 0.95rem;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      transition: 0.25s;
+    }
+    .nav-btn:hover, .nav-btn.active {
+      background: var(--burgundy);
+      color: var(--gold-light);
+      border-color: var(--border);
+    }
+    .logout-btn {
+      color: var(--danger);
+      background: rgba(217, 56, 58, 0.1);
+      border: 1px solid rgba(217, 56, 58, 0.3);
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+    }
+
+    .main-wrapper {
+      margin-right: 280px;
+      padding: 2.5rem;
+      flex-grow: 1;
+      max-width: 100%;
+    }
+    .tab-section { display: none; }
+    .tab-section.active { display: block; animation: fadeIn 0.3s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* الإحصائيات */
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      border-radius: 18px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      backdrop-filter: blur(10px);
+    }
+    .stat-icon {
+      width: 55px;
+      height: 55px;
+      background: rgba(166, 160, 120, 0.15);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--gold);
+    }
+    .stat-val { font-size: 1.8rem; font-weight: 800; color: #fff; }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* الحاويات والجداول */
+    .content-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      backdrop-filter: blur(12px);
+    }
+    .content-box h3 {
+      font-family: 'Amiri', serif;
+      color: var(--gold-light);
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 0.88rem; color: var(--gold-light); font-weight: 600; }
+    input, select, textarea {
+      background: var(--card-inner);
+      border: 1px solid var(--border-soft);
+      color: #fff;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      outline: none;
+    }
+
+    /* صناديق السحب والإفلات التفاعلية */
+    .dropzone-box {
+      border: 2px dashed var(--border);
+      background: rgba(15, 17, 13, 0.4);
+      border-radius: 14px;
+      padding: 1.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.25s;
+      position: relative;
+    }
+    .dropzone-box:hover, .dropzone-box.dragover {
+      border-color: var(--gold);
+      background: rgba(166, 160, 120, 0.1);
+    }
+    .dropzone-box i { font-size: 2.3rem; color: var(--gold); margin-bottom: 0.5rem; }
+    .dropzone-box p { font-size: 0.88rem; color: var(--text-muted); }
+    .preview-box {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(0,0,0,0.3);
+      padding: 0.8rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+    }
+    .preview-box img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid var(--gold);
+    }
+
+    .btn-main {
+      background: linear-gradient(135deg, var(--olive-deep), var(--olive-dark));
+      color: #fff;
+      border: 1px solid var(--border);
+      padding: 0.8rem 1.8rem;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .btn-main:hover { opacity: 0.95; transform: translateY(-2px); }
+
+    .btn-secondary {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      color: var(--gold-light);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: 0.2s;
+    }
+    .btn-secondary:hover { background: var(--burgundy); color: #fff; }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: right;
+      border-bottom: 1px solid var(--border-soft);
+      font-size: 0.9rem;
+    }
+    th {
+      color: var(--gold);
+      font-weight: 700;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .badge-in-stock { background: rgba(37, 211, 102, 0.2); color: var(--success); }
+    .badge-temp-stop { background: rgba(217, 56, 58, 0.2); color: var(--danger); }
+    .badge-coming { background: rgba(224, 159, 34, 0.2); color: var(--warning); }
+    .badge-tag { background: var(--burgundy); color: var(--gold-light); border: 1px solid var(--border); }
+
+    .actions-cell {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .btn-act {
+      background: #20241b;
+      border: 1px solid var(--border-soft);
+      color: #fff;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.2s;
+    }
+    .btn-act:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-act.del { color: var(--danger); }
+    .btn-act.approve { color: var(--success); }
+    .btn-act.pin { color: var(--warning); }
+
+    .review-manage-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .review-manage-card.pinned {
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(166, 160, 120, 0.2);
+    }
+    .reply-box {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    #toastNotification {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      background: rgba(30, 34, 26, 0.95);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      padding: 0.9rem 1.6rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: 0.35s ease;
+      z-index: 100000;
+      backdrop-filter: blur(10px);
+    }
+    #toastNotification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 992px) {
+      .main-wrapper { margin-right: 0; padding: 1.5rem; }
+      .mobile-header { display: flex; }
+      .sidebar { transform: translateX(100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.active { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- تنبيه ناعم بديل لـ alert -->
+  <div id="toastNotification"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> <span id="toastMsg">تم الحفظ بنجاح</span></div>
+
+  <!-- شاشة الدخول المشفّرة -->
+  <div id="lockScreen">
+    <div class="lock-box">
+      <div class="brand">KM</div>
+      <p>بوابة المالك والتحكم الأمني المشفّر</p>
+      <input type="password" id="passInput" class="lock-input" placeholder="••••••••" autofocus>
+      <button class="btn-unlock" onclick="handleLogin()">دخول لوحة الإدارة</button>
+    </div>
+  </div>
+
+  <!-- الهيكل الرئيسي -->
+  <div class="dashboard-layout" id="dashboardLayout">
+    
+    <header class="mobile-header">
+      <h2>KM PARFUMS</h2>
+      <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- القائمة الجانبية -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2 id="sidebarLogoText">KM</h2>
+        <span style="font-size: 0.75rem; color: var(--gold); letter-spacing: 2px;">PERFUMES ADMIN</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" onclick="switchTab('analytics')"><i class="fa-solid fa-chart-line"></i> الإحصائيات والتفاعل</button>
+        <button class="nav-btn" onclick="switchTab('products')"><i class="fa-solid fa-bottle-droplet"></i> إدارة العطور والكتالوج</button>
+        <button class="nav-btn" onclick="switchTab('featured-edition')"><i class="fa-solid fa-crown"></i> الإصدار الاستثنائي</button>
+        <button class="nav-btn" onclick="switchTab('reviews')"><i class="fa-solid fa-star-half-stroke"></i> التعليقات والردود</button>
+        <button class="nav-btn" onclick="switchTab('store-settings')"><i class="fa-solid fa-sliders"></i> الواجهة والشعار والبانرات</button>
+        <button class="nav-btn" onclick="switchTab('security')"><i class="fa-solid fa-shield-halved"></i> الأمان وكلمة السر</button>
+      </nav>
+      <button class="nav-btn logout-btn" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج</button>
+    </aside>
+
+    <!-- مساحة العمل الرئيسية -->
+    <main class="main-wrapper">
+      
+      <!-- 1. الإحصائيات والتفاعل -->
+      <section id="tab-analytics" class="tab-section active">
+        <div class="stats-cards">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-arrow-pointer"></i></div>
+            <div>
+              <div class="stat-val" id="statWhatsAppClicks">0</div>
+              <div class="stat-label">إجمالي نقرات طلبات الواتساب</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-bottle-water"></i></div>
+            <div>
+              <div class="stat-val" id="statTotalProducts">0</div>
+              <div class="stat-label">إجمالي العطور بالمتجر</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+            <div>
+              <div class="stat-val" id="statPendingReviews">0</div>
+              <div class="stat-label">تقييمات معلقة للمراجعة</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-box">
+          <h3>
+            <span><i class="fa-solid fa-fire"></i> العطور الأكثر طلباً ونقراً عبر واتساب</span>
+            <button class="btn-secondary" onclick="simulateWhatsAppClickDemo()"><i class="fa-solid fa-plus"></i> اختبار تسجيل نقرة تجريبية</button>
+          </h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>العطر</th>
+                  <th>التصنيف</th>
+                  <th>السعر</th>
+                  <th>إجمالي النقرات</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="topClickedTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="content-box">
+          <h3>
+            <span><i class="fa-solid fa-list-check"></i> سجل زوار التحويل لطلب الواتساب (Detailed Logs)</span>
+            <button class="btn-secondary" onclick="clearWhatsAppLogs()"><i class="fa-solid fa-trash"></i> تصفير السجل</button>
+          </h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>وقت وتاريخ النقرة</th>
+                  <th>اسم العطر المطلوب</th>
+                  <th>السعر</th>
+                  <th>نوع الجهاز</th>
+                </tr>
+              </thead>
+              <tbody id="clickLogsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. إدارة العطور -->
+      <section id="tab-products" class="tab-section">
+        <div class="content-box">
+          <h3 id="formTitle">إضافة عطر جديد للتشكيلة الملكية</h3>
+          <form id="productForm" onsubmit="handleSaveProduct(event)">
+            <input type="hidden" id="editProductId" value="">
+            
+            <div class="form-grid">
+              <div class="form-group">
+                <label>اسم العطر</label>
+                <input type="text" id="pName" placeholder="مثال: KM Black Tiger Oud" required>
+              </div>
+
+              <div class="form-group">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <label>القسم / التصنيف</label>
+                  <button type="button" class="btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="openCategoryModal()">
+                    <i class="fa-solid fa-gear"></i> إدارة وحذف الأقسام
+                  </button>
+                </div>
+                <select id="pCategory" onchange="handleCategorySelection(this.value)"></select>
+              </div>
+
+              <div class="form-group" id="customCategoryGroup" style="display:none;">
+                <label>اسم التصنيف الجديد</label>
+                <input type="text" id="pCustomCategory" placeholder="اكتب التصنيف الجديد هنا...">
+              </div>
+
+              <div class="form-group">
+                <label>السعر الحالي (ر.س)</label>
+                <input type="number" id="pPrice" placeholder="1250" required>
+              </div>
+
+              <div class="form-group">
+                <label>سعر ما قبل الخصم (اختياري)</label>
+                <input type="number" id="pOldPrice" placeholder="1600">
+              </div>
+
+              <div class="form-group">
+                <label>حالة المخزون</label>
+                <select id="pStock">
+                  <option value="available">متوفر للطلب الفوري</option>
+                  <option value="temp_out">متوقف مؤقتاً (نفد المخزون)</option>
+                  <option value="coming_soon">قريباً في الأسواق</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>شارة العطر الترويجية</label>
+                <select id="pBadge">
+                  <option value="">بدون شارة</option>
+                  <option value="best_seller">الأكثر مبيعاً (أيقونة شعلة)</option>
+                  <option value="special_discount">خصم خاص (أيقونة نجمة)</option>
+                  <option value="limited_edition">إصدار محدود (أيقونة تاج)</option>
+                  <option value="exclusive">حصري لعام 2026</option>
+                </select>
+              </div>
+
+              <div class="form-group full">
+                <label>صورة العطر</label>
+                <div class="dropzone-box" id="dropzoneProduct" onclick="document.getElementById('fileInputProduct').click()">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <p>اسحب وأفلت صورة العطر هنا أو اضغط لاختيارها من جهازك</p>
+                  <input type="file" id="fileInputProduct" accept="image/*" style="display:none;" onchange="handleFileSelect(event, 'pImage', 'productImgPreview')">
+                </div>
+                <input type="hidden" id="pImage">
+                <div class="preview-box" id="productImgPreviewBox" style="display:none;">
+                  <img id="productImgPreview" src="" alt="معاينة العطر">
+                  <div>
+                    <p style="font-size:0.85rem; color:var(--gold-light);">تم تحميل صورة العطر بنجاح</p>
+                    <button type="button" class="btn-act del" onclick="clearSelectedImage('pImage', 'productImgPreviewBox')"><i class="fa-solid fa-trash"></i> حذف الصورة</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group full">
+                <label>الهرم العطري والمكونات الأساسية</label>
+                <input type="text" id="pNotes" placeholder="دهن عود كمبودي معتق • جلد إيطالي • لمسات برغندي" required>
+              </div>
+
+              <div class="form-group full">
+                <label>الوصف الفاخر</label>
+                <textarea id="pDesc" rows="3" placeholder="وصف شعوري يعبر عن شخصية وهيبة العطر..." required></textarea>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+              <button type="submit" class="btn-main" id="saveProdBtn"><i class="fa-solid fa-check"></i> حفظ ونشر العطر بالمتجر</button>
+              <button type="button" class="btn-secondary" onclick="resetProductForm()" style="display:none;" id="cancelEditBtn">إلغاء التعديل</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="content-box">
+          <h3>
+            <span>قائمة العطور والتحكم بالترتيب</span>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button class="btn-secondary" onclick="exportProductsToCSV()"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
+              <button class="btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة / PDF</button>
+            </div>
+          </h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>الترتيب</th>
+                  <th>الصورة</th>
+                  <th>الاسم</th>
+                  <th>القسم</th>
+                  <th>السعر</th>
+                  <th>الشارة</th>
+                  <th>المخزون</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. قسم التحكم بالإصدار الاستثنائي -->
+      <section id="tab-featured-edition" class="tab-section">
+        <div class="content-box">
+          <h3><i class="fa-solid fa-crown"></i> إدارة بطاقة "الإصدار الاستثنائي" في المتجر</h3>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>عنوان العطر الاستثنائي</label>
+              <input type="text" id="featuredTitle" placeholder="مثال: KM Tiger Oud • النمر الأسود">
+            </div>
+
+            <div class="form-group full">
+              <label>الوصف الترويجي للعطر الاستثنائي</label>
+              <textarea id="featuredDesc" rows="3" placeholder="وصف التجربة الحسية والفوحان..."></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label>صورة زجاجة الإصدار الاستثنائي (سحب وإفلات)</label>
+              <div class="dropzone-box" id="dropzoneFeatured" onclick="document.getElementById('fileInputFeatured').click()">
+                <i class="fa-solid fa-image"></i>
+                <p>اسحب صورة الزجاجة هنا أو اضغط للاختيار من جهازك</p>
+                <input type="file" id="fileInputFeatured" accept="image/*" style="display:none;" onchange="handleFileSelect(event, 'featuredImgData', 'featuredImgPreview')">
+              </div>
+              <input type="hidden" id="featuredImgData">
+              <div class="preview-box" id="featuredImgPreviewBox" style="display:none;">
+                <img id="featuredImgPreview" src="" alt="معاينة الإصدار الاستثنائي">
+                <div>
+                  <p style="font-size:0.85rem; color:var(--gold-light);">تم تحميل صورة الزجاجة بنجاح</p>
+                  <button type="button" class="btn-act del" onclick="clearSelectedImage('featuredImgData', 'featuredImgPreviewBox')"><i class="fa-solid fa-trash"></i> حذف</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group full">
+              <label>قمة العطر (المقدمة)</label>
+              <input type="text" id="featuredNotesTop" placeholder="مثال: الهيل الهندي، الزعفران الملكي، ولمسات البرغموت">
+            </div>
+
+            <div class="form-group full">
+              <label>قلب العطر (الوسط)</label>
+              <input type="text" id="featuredNotesHeart" placeholder="مثال: الجلد الإيطالي المدبوغ، الورد الدمشقي، والباتشولي">
+            </div>
+
+            <div class="form-group full">
+              <label>قاعدة العطر (الثبات)</label>
+              <input type="text" id="featuredNotesBase" placeholder="مثال: دهن عود كمبودي معتق، كهرمان دافئ، وأخشاب الأرز">
+            </div>
+          </div>
+          <button class="btn-main" onclick="saveFeaturedEditionSettings()"><i class="fa-solid fa-floppy-disk"></i> حفظ وتحديث الإصدار الاستثنائي بالمتجر</button>
+        </div>
+      </section>
+
+      <!-- 4. التعليقات والردود -->
+      <section id="tab-reviews" class="tab-section">
+        <div class="content-box">
+          <h3>التعليقات المعلقة (بانتظار الموافقة)</h3>
+          <div id="pendingReviewsContainer"></div>
+        </div>
+
+        <div class="content-box">
+          <h3>
+            <span>التعليقات المنشورة والردود والتثبيت</span>
+            <button class="btn-secondary" onclick="exportReviewsToCSV()"><i class="fa-solid fa-file-excel"></i> تصدير التقييمات Excel</button>
+          </h3>
+          <div id="approvedReviewsContainer"></div>
+        </div>
+      </section>
+
+      <!-- 5. إعدادات الشعار والواجهة والبانرات وروابط التواصل -->
+      <section id="tab-store-settings" class="tab-section">
+        
+        <!-- التحكم باللوجو العلوي والسفلي -->
+        <div class="content-box">
+          <h3><i class="fa-solid fa-signature"></i> التحكم بشعار وهوية المتجر (Logo & Branding)</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>اسم الشعار الرئيسي (Header Logo)</label>
+              <input type="text" id="settingLogoMain" placeholder="KM">
+            </div>
+            <div class="form-group">
+              <label>النص الفرعي للشعار</label>
+              <input type="text" id="settingLogoSub" placeholder="HAUTE PARFUMERIE">
+            </div>
+            <div class="form-group">
+              <label>الشعار المائي الكبير في الفوتر (Watermark)</label>
+              <input type="text" id="settingLogoWatermark" placeholder="KM">
+            </div>
+            <div class="form-group full">
+              <label>أو رفع صورة شعار بديلة (سحب وإفلات)</label>
+              <div class="dropzone-box" id="dropzoneLogo" onclick="document.getElementById('fileInputLogo').click()">
+                <i class="fa-solid fa-gem"></i>
+                <p>اسحب صورة الشعار هنا أو اضغط لرفعها من جهازك</p>
+                <input type="file" id="fileInputLogo" accept="image/*" style="display:none;" onchange="handleFileSelect(event, 'settingLogoImg', 'logoImgPreview')">
+              </div>
+              <input type="hidden" id="settingLogoImg">
+              <div class="preview-box" id="logoImgPreviewBox" style="display:none;">
+                <img id="logoImgPreview" src="" alt="معاينة اللوجو">
+                <div>
+                  <p style="font-size:0.85rem; color:var(--gold-light);">تم تحميل صورة الشعار بنجاح</p>
+                  <button type="button" class="btn-act del" onclick="clearSelectedImage('settingLogoImg', 'logoImgPreviewBox')"><i class="fa-solid fa-trash"></i> حذف</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-main" onclick="saveBrandSettings()"><i class="fa-solid fa-floppy-disk"></i> حفظ وتحديث الشعار في المتجر</button>
+        </div>
+
+        <!-- صورة البانر في الهيرو ومعلومات الواجهة -->
+        <div class="content-box">
+          <h3><i class="fa-solid fa-image"></i> واجهة الهيرو والبانر الرئيسي</h3>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>نص شريط الإعلانات أعلى المتجر</label>
+              <input type="text" id="settingAnnouncement" placeholder="شحن مجاني لكافة طلبات العطور الملكية هذا الأسبوع">
+            </div>
+            <div class="form-group full">
+              <label>العنوان الرئيسي في واجهة الهيرو</label>
+              <input type="text" id="settingHeroTitle" placeholder="عطور تفوح بالهيبة، تخلد حضورك">
+            </div>
+            <div class="form-group full">
+              <label>الوصف الترويجي في واجهة الهيرو</label>
+              <textarea id="settingHeroSubtitle" rows="2"></textarea>
+            </div>
+            
+            <div class="form-group full">
+              <label>صورة زجاجة العطر في الهيرو (سحب وإفلات بدلاً من الرابط)</label>
+              <div class="dropzone-box" id="dropzoneHero" onclick="document.getElementById('fileInputHero').click()">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p>اسحب صورة الزجاجة للبانر هنا أو اضغط لاختيارها من جهازك</p>
+                <input type="file" id="fileInputHero" accept="image/*" style="display:none;" onchange="handleFileSelect(event, 'settingHeroImageData', 'heroImgPreview')">
+              </div>
+              <input type="hidden" id="settingHeroImageData">
+              <div class="preview-box" id="heroImgPreviewBox" style="display:none;">
+                <img id="heroImgPreview" src="" alt="معاينة بانر الهيرو">
+                <div>
+                  <p style="font-size:0.85rem; color:var(--gold-light);">تم تحميل صورة البانر بنجاح</p>
+                  <button type="button" class="btn-act del" onclick="clearSelectedImage('settingHeroImageData', 'heroImgPreviewBox')"><i class="fa-solid fa-trash"></i> حذف</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>اسم الإصدار أسفل الزجاجة بالهيرو</label>
+              <input type="text" id="settingHeroTagName" placeholder="مثال: عود النمر • Tiger Oud">
+            </div>
+            <div class="form-group">
+              <label>السعر أسفل الزجاجة بالهيرو</label>
+              <input type="text" id="settingHeroTagPrice" placeholder="مثال: 1,250 ر.س">
+            </div>
+          </div>
+          <button class="btn-main" onclick="saveBannerSettings()"><i class="fa-solid fa-floppy-disk"></i> حفظ وتحديث واجهة المتجر</button>
+        </div>
+
+        <!-- إعدادات الواتساب وروابط التواصل -->
+        <div class="content-box">
+          <h3><i class="fa-brands fa-whatsapp"></i> إعدادات الواتساب والتواصل الاجتماعي</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>رقم هاتف الواتساب (مع الرمز الدولي بدون +)</label>
+              <input type="text" id="settingWhatsapp" placeholder="966500000000">
+            </div>
+            <div class="form-group">
+              <label><i class="fa-brands fa-instagram"></i> رابط إنستغرام</label>
+              <input type="url" id="settingInstagram" placeholder="https://instagram.com/yourbrand">
+            </div>
+            <div class="form-group">
+              <label><i class="fa-brands fa-tiktok"></i> رابط تيك توك</label>
+              <input type="url" id="settingTiktok" placeholder="https://tiktok.com/@yourbrand">
+            </div>
+            <div class="form-group">
+              <label><i class="fa-brands fa-snapchat"></i> رابط سناب شات</label>
+              <input type="url" id="settingSnapchat" placeholder="https://snapchat.com/add/yourbrand">
+            </div>
+            <div class="form-group full">
+              <label>قالب رسالة الطلب التلقائية</label>
+              <textarea id="settingMsgTemplate" rows="3"></textarea>
+            </div>
+          </div>
+          <button class="btn-main" onclick="saveWhatsappAndSocial()"><i class="fa-solid fa-floppy-disk"></i> حفظ إعدادات التواصل والواتساب</button>
+        </div>
+      </section>
+
+      <!-- 6. الأمان وكلمة السر -->
+      <section id="tab-security" class="tab-section">
+        <div class="content-box">
+          <h3>تعديل كلمة مرور لوحة الإدارة</h3>
+          <div class="form-grid" style="max-width: 420px;">
+            <div class="form-group full">
+              <label>كلمة المرور الحالية</label>
+              <input type="password" id="oldPass">
+            </div>
+            <div class="form-group full">
+              <label>كلمة المرور الجديدة</label>
+              <input type="password" id="newPass">
+            </div>
+          </div>
+          <button class="btn-main" onclick="changeAdminPassword()"><i class="fa-solid fa-key"></i> تحديث الرمز السري</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- نافذة إدارة وحذف التصنيفات -->
+  <div id="categoryModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:100002; align-items:center; justify-content:center; padding:1.5rem;">
+    <div class="content-box" style="width:100%; max-width:480px; margin:0; background:rgba(28, 32, 24, 0.98); border:1px solid var(--gold); box-shadow:0 10px 40px rgba(0,0,0,0.8);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; border-bottom:1px solid var(--border-soft); padding-bottom:0.8rem;">
+        <h3 style="margin:0; font-size:1.3rem; color:var(--gold);"><i class="fa-solid fa-tags"></i> إدارة وحذف الأقسام</h3>
+        <button type="button" class="btn-act" onclick="closeCategoryModal()" style="font-size:1rem;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">يمكنك حذف أي تصنيف تريده، وسيتم إزالته من القوائم فوراً.</p>
+
+      <div id="categoriesManageList" style="display:flex; flex-direction:column; gap:0.6rem; max-height:280px; overflow-y:auto; margin-bottom:1.5rem;">
+        <!-- عناصر الأقسام تظهر هنا تلقائياً -->
+      </div>
+
+      <div style="text-align:left;">
+        <button type="button" class="btn-secondary" onclick="closeCategoryModal()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+    const DEFAULT_PASS = "km2026";
+
+    function showToast(msg) {
+      const toast = document.getElementById("toastNotification");
+      const text = document.getElementById("toastMsg");
+      if (!toast) return;
+      text.innerText = msg;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2800);
+    }
+
+    function getStoredPassword() {
+      return localStorage.getItem("km_admin_pass") || DEFAULT_PASS;
+    }
+
+    function handleLogin() {
+      const entered = document.getElementById("passInput").value;
+      if (entered === getStoredPassword()) {
+        sessionStorage.setItem("km_auth", "true");
+        showDashboard();
+      } else {
+        showToast("رمز المرور غير صحيح! يرجى إعادة المحاولة.");
+        document.getElementById("passInput").value = "";
+      }
+    }
+
+    document.getElementById("passInput")?.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") handleLogin();
+    });
+
+    function handleLogout() {
+      sessionStorage.removeItem("km_auth");
+      location.reload();
+    }
+
+    function checkAuth() {
+      if (sessionStorage.getItem("km_auth") === "true") {
+        showDashboard();
+      }
+    }
+
+    function showDashboard() {
+      if (document.getElementById("lockScreen")) document.getElementById("lockScreen").style.display = "none";
+      if (document.getElementById("dashboardLayout")) document.getElementById("dashboardLayout").style.display = "block";
+      initCategories();
+      loadAllAdminData();
+      setupAllDropzones();
+    }
+
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+      document.getElementById("sidebarOverlay").classList.toggle("active");
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-section").forEach(sec => sec.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
+      
+      const targetSec = document.getElementById("tab-" + tabId);
+      if (targetSec) targetSec.classList.add("active");
+      if (window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add("active");
+      }
+      if (window.innerWidth <= 992) {
+        toggleSidebar();
+      }
+    }
+
+    function changeAdminPassword() {
+      const oldP = document.getElementById("oldPass").value;
+      const newP = document.getElementById("newPass").value;
+      if (oldP !== getStoredPassword()) {
+        showToast("كلمة المرور الحالية غير صحيحة!");
+        return;
+      }
+      if (!newP || newP.length < 4) {
+        showToast("يرجى إدخال كلمة سر لا تقل عن 4 خانات!");
+        return;
+      }
+      localStorage.setItem("km_admin_pass", newP);
+      showToast("تم تحديث كلمة المرور بنجاح!");
+      document.getElementById("oldPass").value = "";
+      document.getElementById("newPass").value = "";
+    }
+
+    // 2. إعداد مناطق السحب والإفلات ومعالجة الصور
+    function setupAllDropzones() {
+      setupDropzoneHandler("dropzoneProduct", "fileInputProduct", "pImage", "productImgPreview");
+      setupDropzoneHandler("dropzoneHero", "fileInputHero", "settingHeroImageData", "heroImgPreview");
+      setupDropzoneHandler("dropzoneFeatured", "fileInputFeatured", "featuredImgData", "featuredImgPreview");
+      setupDropzoneHandler("dropzoneLogo", "fileInputLogo", "settingLogoImg", "logoImgPreview");
+    }
+
+    function setupDropzoneHandler(dropzoneId, inputId, hiddenFieldId, previewImgId) {
+      const dropzone = document.getElementById(dropzoneId);
+      if (!dropzone) return;
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.add('dragover');
+        }, false);
+      });
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('dragover');
+        }, false);
+      });
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files[0]) {
+          readFileAndSet(files[0], hiddenFieldId, previewImgId);
+        }
+      });
+    }
+
+    function handleFileSelect(e, hiddenFieldId, previewImgId) {
+      const file = e.target.files[0];
+      if (file) {
+        readFileAndSet(file, hiddenFieldId, previewImgId);
+      }
+    }
+
+    // ضغط الصور تلقائياً لمنع امتلاء التخزين وتوقف زر الحفظ
+    function readFileAndSet(file, hiddenFieldId, previewImgId) {
+      if (!file.type.startsWith('image/')) {
+        showToast("يرجى اختيار ملف صورة صالح!");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDim = hiddenFieldId === "settingLogoImg" ? 360 : 750;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedDataUrl = canvas.toDataURL(file.type.includes("png") ? "image/png" : "image/jpeg", 0.85);
+
+          document.getElementById(hiddenFieldId).value = compressedDataUrl;
+          const preview = document.getElementById(previewImgId);
+          if (preview) {
+            preview.src = compressedDataUrl;
+            preview.parentElement.style.display = "flex";
+          }
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearSelectedImage(hiddenFieldId, previewBoxId) {
+      document.getElementById(hiddenFieldId).value = "";
+      const box = document.getElementById(previewBoxId);
+      if (box) box.style.display = "none";
+    }
+
+    // 3. إدارة وحذف التصنيفات
+    function getStoredCategories() {
+      return JSON.parse(localStorage.getItem("km_categories")) || [
+        { key: "men", label: "رجالي فاخر" },
+        { key: "women", label: "نسائي مخملي" },
+        { key: "oriental", label: "شرقي ملكي (عود وجلود)" },
+        { key: "amber", label: "كهرمان وبرغندي" },
+        { key: "unisex", label: "للجنسين" }
+      ];
+    }
+
+    function initCategories() {
+      const cats = getStoredCategories();
+      const select = document.getElementById("pCategory");
+      if (!select) return;
+
+      const currentSelected = select.value;
+      select.innerHTML = "";
+
+      cats.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.key;
+        opt.textContent = c.label;
+        select.appendChild(opt);
+      });
+
+      const customOpt = document.createElement("option");
+      customOpt.value = "CUSTOM_NEW";
+      customOpt.textContent = "+ إضافة تصنيف جديد...";
+      select.appendChild(customOpt);
+
+      if (cats.some(c => c.key === currentSelected)) {
+        select.value = currentSelected;
+      }
+    }
+
+    function handleCategorySelection(val) {
+      const customGroup = document.getElementById("customCategoryGroup");
+      if (!customGroup) return;
+      if (val === "CUSTOM_NEW") {
+        customGroup.style.display = "flex";
+        document.getElementById("pCustomCategory").focus();
+      } else {
+        customGroup.style.display = "none";
+      }
+    }
+
+    function openCategoryModal() {
+      renderCategoryManagerList();
+      const modal = document.getElementById("categoryModal");
+      if (modal) modal.style.display = "flex";
+    }
+
+    function closeCategoryModal() {
+      const modal = document.getElementById("categoryModal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function renderCategoryManagerList() {
+      const listContainer = document.getElementById("categoriesManageList");
+      if (!listContainer) return;
+      const cats = getStoredCategories();
+      const products = getProducts();
+
+      listContainer.innerHTML = "";
+
+      if (cats.length === 0) {
+        listContainer.innerHTML = "<p style='color:var(--text-muted); font-size:0.9rem; text-align:center;'>لا توجد تصنيفات حالياً.</p>";
+        return;
+      }
+
+      cats.forEach(c => {
+        const count = products.filter(p => p.category === c.key).length;
+        const row = document.createElement("div");
+        row.style.display = "flex";
+        row.style.justifyContent = "space-between";
+        row.style.alignItems = "center";
+        row.style.background = "var(--card-inner)";
+        row.style.padding = "0.7rem 1rem";
+        row.style.borderRadius = "10px";
+        row.style.border = "1px solid var(--border-soft)";
+
+        row.innerHTML = `
+          <div>
+            <strong style="color:var(--gold-light); font-size:0.95rem;">${c.label}</strong>
+            <span style="font-size:0.75rem; color:var(--text-muted); margin-right:0.6rem;">(${count} عطور)</span>
+          </div>
+          <button type="button" class="btn-act del" onclick="deleteCategory('${c.key}', '${c.label}', ${count})">
+            <i class="fa-solid fa-trash"></i> حذف
+          </button>
+        `;
+        listContainer.appendChild(row);
+      });
+    }
+
+    function deleteCategory(key, label, count) {
+      let confirmMsg = `هل تريد بالتأكيد حذف تصنيف "${label}"؟`;
+      if (count > 0) {
+        confirmMsg = `تنبيه: هذا التصنيف يحتوي على (${count}) من العطور.\nهل تريد حذف التصنيف بالرغم من ذلك؟`;
+      }
+      
+      if (!confirm(confirmMsg)) return;
+
+      let cats = getStoredCategories();
+      cats = cats.filter(c => c.key !== key);
+      localStorage.setItem("km_categories", JSON.stringify(cats));
+
+      initCategories();
+      renderCategoryManagerList();
+      renderProductsTable();
+      renderAnalytics();
+      showToast(`تم حذف تصنيف "${label}" بنجاح!`);
+    }
+
+    // 4. إدارة العطور
+    function getBadgeHTML(badgeCode) {
+      if (!badgeCode) return '-';
+      if (badgeCode === 'best_seller' || badgeCode.includes('الأكثر مبيعاً')) {
+        return '<span class="badge badge-tag"><i class="fa-solid fa-fire" style="color:#ff6b4a;"></i> الأكثر مبيعاً</span>';
+      }
+      if (badgeCode === 'special_discount' || badgeCode.includes('خصم خاص')) {
+        return '<span class="badge badge-tag"><i class="fa-solid fa-star" style="color:var(--gold);"></i> خصم خاص</span>';
+      }
+      if (badgeCode === 'limited_edition' || badgeCode.includes('إصدار محدود')) {
+        return '<span class="badge badge-tag"><i class="fa-solid fa-crown" style="color:#f5c518;"></i> إصدار محدود</span>';
+      }
+      return `<span class="badge badge-tag">${badgeCode}</span>`;
+    }
+
+    function getProducts() {
+      return JSON.parse(localStorage.getItem("km_products")) || [];
+    }
+
+    function setProducts(prods) {
+      localStorage.setItem("km_products", JSON.stringify(prods));
+      renderProductsTable();
+      renderAnalytics();
+    }
+
+    function renderProductsTable() {
+      const tbody = document.getElementById("productsTableBody");
+      if (!tbody) return;
+      const products = getProducts();
+      const cats = getStoredCategories();
+      tbody.innerHTML = "";
+
+      products.forEach((p, index) => {
+        let stockBadge = '<span class="badge badge-in-stock">متوفر</span>';
+        if (p.stock === 'temp_out') stockBadge = '<span class="badge badge-temp-stop">متوقف مؤقتاً</span>';
+        if (p.stock === 'coming_soon') stockBadge = '<span class="badge badge-coming">قريباً</span>';
+
+        const catObj = cats.find(c => c.key === p.category);
+        const catName = catObj ? catObj.label : (p.category || 'بدون تصنيف');
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>
+            <button class="btn-act" onclick="moveProduct(${index}, -1)" ${index === 0 ? 'disabled':''}><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="btn-act" onclick="moveProduct(${index}, 1)" ${index === products.length - 1 ? 'disabled':''}><i class="fa-solid fa-arrow-down"></i></button>
+          </td>
+          <td><img src="${p.image}" style="width:45px; height:45px; border-radius:8px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/45'"></td>
+          <td><strong>${p.name}</strong></td>
+          <td>${catName}</td>
+          <td>
+            ${p.price} ر.س 
+            ${p.oldPrice ? `<small style="text-decoration:line-through; color:#888;">${p.oldPrice}</small>` : ''}
+          </td>
+          <td>${getBadgeHTML(p.badge)}</td>
+          <td>${stockBadge}</td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn-act" onclick="editProduct('${p.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn-act del" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function handleSaveProduct(e) {
+      e.preventDefault();
+      const id = document.getElementById("editProductId").value;
+      const products = getProducts();
+      let category = document.getElementById("pCategory").value;
+
+      if (category === "CUSTOM_NEW") {
+        const customCatName = document.getElementById("pCustomCategory").value.trim();
+        if (!customCatName) {
+          showToast("يرجى كتابة اسم التصنيف الجديد!");
+          return;
+        }
+        const cats = getStoredCategories();
+        const customKey = "cat_" + Date.now();
+        cats.push({ key: customKey, label: customCatName });
+        localStorage.setItem("km_categories", JSON.stringify(cats));
+        initCategories();
+        category = customKey;
+      }
+
+      const imgVal = document.getElementById("pImage").value.trim();
+      if (!imgVal) {
+        showToast("يرجى سحب وإفلات صورة للعطر أولاً!");
+        return;
+      }
+
+      const productData = {
+        id: id || "km-" + Date.now(),
+        name: document.getElementById("pName").value,
+        category: category,
+        price: document.getElementById("pPrice").value,
+        oldPrice: document.getElementById("pOldPrice").value || null,
+        stock: document.getElementById("pStock").value,
+        badge: document.getElementById("pBadge").value || null,
+        image: imgVal,
+        notes: document.getElementById("pNotes").value,
+        desc: document.getElementById("pDesc").value,
+        clicks: id ? (products.find(p => p.id === id)?.clicks || 0) : 0
+      };
+
+      if (id) {
+        const index = products.findIndex(p => p.id === id);
+        if (index !== -1) products[index] = productData;
+      } else {
+        products.unshift(productData);
+      }
+
+      setProducts(products);
+      resetProductForm();
+      showToast("تم حفظ ونشر العطر بالمتجر بنجاح!");
+    }
+
+    function editProduct(id) {
+      const p = getProducts().find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById("editProductId").value = p.id;
+      document.getElementById("pName").value = p.name;
+      document.getElementById("pCategory").value = p.category;
+      document.getElementById("pPrice").value = p.price;
+      document.getElementById("pOldPrice").value = p.oldPrice || "";
+      document.getElementById("pStock").value = p.stock || "available";
+      document.getElementById("pBadge").value = p.badge || "";
+      document.getElementById("pImage").value = p.image;
+      document.getElementById("pNotes").value = p.notes;
+      document.getElementById("pDesc").value = p.desc;
+
+      const preview = document.getElementById("productImgPreview");
+      if (preview) {
+        preview.src = p.image;
+        document.getElementById("productImgPreviewBox").style.display = "flex";
+      }
+
+      document.getElementById("customCategoryGroup").style.display = "none";
+      document.getElementById("formTitle").innerText = "تعديل بيانات العطر: " + p.name;
+      document.getElementById("saveProdBtn").innerHTML = "<i class='fa-solid fa-pen-to-square'></i> تحديث التعديلات";
+      document.getElementById("cancelEditBtn").style.display = "inline-flex";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetProductForm() {
+      document.getElementById("productForm").reset();
+      document.getElementById("editProductId").value = "";
+      clearSelectedImage('pImage', 'productImgPreviewBox');
+      document.getElementById("customCategoryGroup").style.display = "none";
+      document.getElementById("formTitle").innerText = "إضافة عطر جديد للتشكيلة الملكية";
+      document.getElementById("saveProdBtn").innerHTML = "<i class='fa-solid fa-check'></i> حفظ ونشر العطر بالمتجر";
+      document.getElementById("cancelEditBtn").style.display = "none";
+    }
+
+    function deleteProduct(id) {
+      if (confirm("هل تريد بالتأكيد حذف هذا العطر نهائياً؟")) {
+        const products = getProducts().filter(p => p.id !== id);
+        setProducts(products);
+        showToast("تم حذف العطر بنجاح!");
+      }
+    }
+
+    function moveProduct(index, direction) {
+      const products = getProducts();
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= products.length) return;
+      const temp = products[index];
+      products[index] = products[targetIndex];
+      products[targetIndex] = temp;
+      setProducts(products);
+    }
+
+    // 5. إدارة قسم "الإصدار الاستثنائي"
+    function loadFeaturedEditionData() {
+      const feat = JSON.parse(localStorage.getItem("km_featured_edition")) || {
+        title: "KM Tiger Oud • النمر الأسود",
+        desc: "تجربة حسية متفردة تم استخلاصها بأيدي كبار صانعي العطور الفرنسية والشرقية ليمنحك ثباتاً يتجاوز 48 ساعة.",
+        image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+        notesTop: "الهيل الهندي، الزعفران الملكي، ولمسات البرغموت",
+        notesHeart: "الجلد الإيطالي المدبوغ، الورد الدمشقي، والباتشولي",
+        notesBase: "دهن عود كمبودي معتق، كهرمان دافئ، وأخشاب الأرز"
+      };
+
+      if (document.getElementById("featuredTitle")) document.getElementById("featuredTitle").value = feat.title || "";
+      if (document.getElementById("featuredDesc")) document.getElementById("featuredDesc").value = feat.desc || "";
+      if (document.getElementById("featuredNotesTop")) document.getElementById("featuredNotesTop").value = feat.notesTop || "";
+      if (document.getElementById("featuredNotesHeart")) document.getElementById("featuredNotesHeart").value = feat.notesHeart || "";
+      if (document.getElementById("featuredNotesBase")) document.getElementById("featuredNotesBase").value = feat.notesBase || "";
+
+      if (feat.image) {
+        if (document.getElementById("featuredImgData")) document.getElementById("featuredImgData").value = feat.image;
+        if (document.getElementById("featuredImgPreview")) document.getElementById("featuredImgPreview").src = feat.image;
+        if (document.getElementById("featuredImgPreviewBox")) document.getElementById("featuredImgPreviewBox").style.display = "flex";
+      }
+    }
+
+    function saveFeaturedEditionSettings() {
+      const titleEl = document.getElementById("featuredTitle");
+      const descEl = document.getElementById("featuredDesc");
+      const imgEl = document.getElementById("featuredImgData");
+      const topEl = document.getElementById("featuredNotesTop");
+      const heartEl = document.getElementById("featuredNotesHeart");
+      const baseEl = document.getElementById("featuredNotesBase");
+
+      const feat = {
+        title: titleEl ? titleEl.value.trim() : "KM Tiger Oud • النمر الأسود",
+        desc: descEl ? descEl.value.trim() : "",
+        image: (imgEl && imgEl.value) ? imgEl.value : "",
+        notesTop: topEl ? topEl.value.trim() : "",
+        notesHeart: heartEl ? heartEl.value.trim() : "",
+        notesBase: baseEl ? baseEl.value.trim() : ""
+      };
+
+      localStorage.setItem("km_featured_edition", JSON.stringify(feat));
+      showToast("تم تحديث بطاقة الإصدار الاستثنائي بالمتجر بنجاح!");
+    }
+
+    // 6. إدارة الشعار والبانر
+    function loadBrandAndBannerSettings() {
+      const settings = JSON.parse(localStorage.getItem("km_settings")) || {};
+
+      const savedLogo = settings.logoImage || localStorage.getItem("km_store_logo") || "";
+      const savedLogoMain = settings.logoMain || localStorage.getItem("km_brand_title") || "KM";
+      const savedLogoSub = settings.logoSub || localStorage.getItem("km_brand_sub") || "HAUTE PARFUMERIE";
+
+      const heroTagName = localStorage.getItem("km_hero_tag_name") || settings.heroTagName || "عود النمر • Tiger Oud";
+      const heroTagPrice = localStorage.getItem("km_hero_tag_price") || settings.heroTagPrice || "1,250 ر.س";
+
+      if (document.getElementById("settingWhatsapp")) document.getElementById("settingWhatsapp").value = settings.whatsapp || "";
+      if (document.getElementById("settingMsgTemplate")) document.getElementById("settingMsgTemplate").value = settings.template || "";
+      if (document.getElementById("settingAnnouncement")) document.getElementById("settingAnnouncement").value = settings.announcement || "";
+      if (document.getElementById("settingHeroTitle")) document.getElementById("settingHeroTitle").value = settings.heroTitle || "";
+      if (document.getElementById("settingHeroSubtitle")) document.getElementById("settingHeroSubtitle").value = settings.heroSubtitle || "";
+      
+      if (document.getElementById("settingHeroTagName")) document.getElementById("settingHeroTagName").value = heroTagName;
+      if (document.getElementById("settingHeroTagPrice")) document.getElementById("settingHeroTagPrice").value = heroTagPrice;
+
+      if (document.getElementById("settingLogoMain")) document.getElementById("settingLogoMain").value = savedLogoMain;
+      if (document.getElementById("settingLogoSub")) document.getElementById("settingLogoSub").value = savedLogoSub;
+      if (document.getElementById("settingLogoWatermark")) document.getElementById("settingLogoWatermark").value = settings.logoWatermark || "KM";
+      if (document.getElementById("sidebarLogoText")) document.getElementById("sidebarLogoText").innerText = savedLogoMain;
+
+      if (document.getElementById("settingInstagram")) document.getElementById("settingInstagram").value = settings.instagram || "";
+      if (document.getElementById("settingTiktok")) document.getElementById("settingTiktok").value = settings.tiktok || "";
+      if (document.getElementById("settingSnapchat")) document.getElementById("settingSnapchat").value = settings.snapchat || "";
+
+      const heroImg = localStorage.getItem("km_hero_image") || settings.heroImage || "";
+      if (heroImg && document.getElementById("heroImgPreview")) {
+        document.getElementById("settingHeroImageData").value = heroImg;
+        document.getElementById("heroImgPreview").src = heroImg;
+        document.getElementById("heroImgPreviewBox").style.display = "flex";
+      }
+
+      if (savedLogo && document.getElementById("logoImgPreview")) {
+        document.getElementById("settingLogoImg").value = savedLogo;
+        document.getElementById("logoImgPreview").src = savedLogo;
+        document.getElementById("logoImgPreviewBox").style.display = "flex";
+      }
+    }
+
+    function saveBrandSettings() {
+      try {
+        const settings = JSON.parse(localStorage.getItem("km_settings")) || {};
+        const logoMain = document.getElementById("settingLogoMain").value.trim() || "KM";
+        const logoSub = document.getElementById("settingLogoSub").value.trim() || "HAUTE PARFUMERIE";
+        const logoWatermark = document.getElementById("settingLogoWatermark").value.trim() || "KM";
+        const logoImg = document.getElementById("settingLogoImg").value || "";
+
+        settings.logoMain = logoMain;
+        settings.logoSub = logoSub;
+        settings.logoWatermark = logoWatermark;
+        settings.logoImage = logoImg;
+
+        localStorage.setItem("km_settings", JSON.stringify(settings));
+        localStorage.setItem("km_brand_title", logoMain);
+        localStorage.setItem("km_brand_sub", logoSub);
+        if (logoImg) {
+          localStorage.setItem("km_store_logo", logoImg);
+        }
+
+        if (document.getElementById("sidebarLogoText")) document.getElementById("sidebarLogoText").innerText = logoMain;
+        showToast("تم تحديث الشعار والهوية بنجاح!");
+      } catch (err) {
+        showToast("حجم الصورة كبير جداً، تم حفظ النصوص وتخفيف الشعار.");
+      }
+    }
+
+    function saveBannerSettings() {
+      try {
+        const settings = JSON.parse(localStorage.getItem("km_settings")) || {};
+        const heroTitle = document.getElementById("settingHeroTitle").value;
+        const heroSubtitle = document.getElementById("settingHeroSubtitle").value;
+        const announcement = document.getElementById("settingAnnouncement").value;
+        const heroTagName = document.getElementById("settingHeroTagName").value.trim();
+        const heroTagPrice = document.getElementById("settingHeroTagPrice").value.trim();
+        const heroImg = document.getElementById("settingHeroImageData").value;
+
+        settings.announcement = announcement;
+        settings.heroTitle = heroTitle;
+        settings.heroSubtitle = heroSubtitle;
+        settings.heroTagName = heroTagName;
+        settings.heroTagPrice = heroTagPrice;
+        if (heroImg) settings.heroImage = heroImg;
+
+        localStorage.setItem("km_settings", JSON.stringify(settings));
+        localStorage.setItem("km_hero_tag_name", heroTagName);
+        localStorage.setItem("km_hero_tag_price", heroTagPrice);
+        if (heroImg) localStorage.setItem("km_hero_image", heroImg);
+
+        showToast("تم حفظ واجهة المتجر واسم العطر وسعره بنجاح!");
+      } catch (err) {
+        showToast("تعذر حفظ صورة البانر لكبر حجمها، تم حفظ النصوص فقط.");
+      }
+    }
+
+    function saveWhatsappAndSocial() {
+      const settings = JSON.parse(localStorage.getItem("km_settings")) || {};
+      settings.whatsapp = document.getElementById("settingWhatsapp").value.trim();
+      settings.instagram = document.getElementById("settingInstagram").value.trim();
+      settings.tiktok = document.getElementById("settingTiktok").value.trim();
+      settings.snapchat = document.getElementById("settingSnapchat").value.trim();
+      settings.template = document.getElementById("settingMsgTemplate").value;
+
+      localStorage.setItem("km_settings", JSON.stringify(settings));
+      showToast("تم حفظ إعدادات الواتساب وروابط التواصل بنجاح!");
+    }
+
+    // 7. التقييمات والردود
+    function getReviews() {
+      return JSON.parse(localStorage.getItem("km_reviews_full")) || [];
+    }
+
+    function setReviews(revs) {
+      localStorage.setItem("km_reviews_full", JSON.stringify(revs));
+      const approvedForStore = revs.filter(r => r.approved);
+      localStorage.setItem("km_reviews", JSON.stringify(approvedForStore));
+      renderReviewsAdmin();
+      renderAnalytics();
+    }
+
+    function renderReviewsAdmin() {
+      const revs = getReviews();
+      const pendingBox = document.getElementById("pendingReviewsContainer");
+      const approvedBox = document.getElementById("approvedReviewsContainer");
+      if (!pendingBox || !approvedBox) return;
+
+      pendingBox.innerHTML = "";
+      approvedBox.innerHTML = "";
+
+      const pendingList = revs.filter(r => !r.approved);
+      const approvedList = revs.filter(r => r.approved);
+
+      if (pendingList.length === 0) {
+        pendingBox.innerHTML = "<p style='color:#aaa;'>لا توجد تعليقات معلقة، جميع التقييمات مراجعة.</p>";
+      } else {
+        pendingList.forEach(r => {
+          const div = document.createElement("div");
+          div.className = "review-manage-card";
+          div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong>${r.name}</strong>
+              <span style="color:var(--gold);">${"★".repeat(r.rating)}</span>
+            </div>
+            <p style="margin:0.5rem 0; color:#ddd;">"${r.text}"</p>
+            <div class="actions-cell" style="margin-top:0.8rem;">
+              <button class="btn-act approve" onclick="approveReview('${r.id}')"><i class="fa-solid fa-check"></i> موافقة ونشر بالمتجر</button>
+              <button class="btn-act del" onclick="deleteReview('${r.id}')"><i class="fa-solid fa-trash"></i> حذف</button>
+            </div>
+          `;
+          pendingBox.appendChild(div);
+        });
+      }
+
+      approvedList.forEach(r => {
+        const div = document.createElement("div");
+        div.className = "review-manage-card " + (r.pinned ? "pinned" : "");
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <strong>${r.name}</strong> 
+              ${r.pinned ? '<span class="badge badge-tag"><i class="fa-solid fa-thumbtack"></i> مثبت في الواجهة</span>' : ''}
+            </div>
+            <span style="color:var(--gold);">${"★".repeat(r.rating)}</span>
+          </div>
+          <p style="margin:0.5rem 0; color:#eee;">"${r.text}"</p>
+          ${r.reply ? `<p style="background:rgba(166,160,120,0.1); padding:0.6rem; border-radius:8px; color:var(--gold); font-size:0.9rem; margin-top:0.5rem;"><i class="fa-solid fa-reply"></i> <strong>رد الإدارة:</strong> ${r.reply}</p>` : ''}
+          <div class="reply-box">
+            <input type="text" id="reply_input_${r.id}" placeholder="اكتب رد الدار على العميل ليظهر بالمتجر..." value="${r.reply || ''}">
+            <button class="btn-secondary" onclick="submitReviewReply('${r.id}')"><i class="fa-solid fa-paper-plane"></i> نشر الرد</button>
+          </div>
+          <div class="actions-cell" style="margin-top:0.8rem;">
+            <button class="btn-act pin" onclick="togglePinReview('${r.id}')"><i class="fa-solid fa-thumbtack"></i> ${r.pinned ? 'إلغاء التثبيت' : 'تثبيت في الأعلى'}</button>
+            <button class="btn-act del" onclick="deleteReview('${r.id}')"><i class="fa-solid fa-trash"></i> حذف</button>
+          </div>
+        `;
+        approvedBox.appendChild(div);
+      });
+    }
+
+    function approveReview(id) {
+      const revs = getReviews();
+      const r = revs.find(item => item.id === id);
+      if (r) { r.approved = true; setReviews(revs); showToast("تم نشر التقييم بنجاح!"); }
+    }
+
+    function togglePinReview(id) {
+      const revs = getReviews();
+      const r = revs.find(item => item.id === id);
+      if (r) { r.pinned = !r.pinned; setReviews(revs); showToast("تم تحديث تثبيت التقييم!"); }
+    }
+
+    function submitReviewReply(id) {
+      const text = document.getElementById("reply_input_" + id).value.trim();
+      const revs = getReviews();
+      const r = revs.find(item => item.id === id);
+      if (r) {
+        r.reply = text;
+        setReviews(revs);
+        showToast("تم نشر الرد بنجاح!");
+      }
+    }
+
+    function deleteReview(id) {
+      if (confirm("حذف هذا التعليق نهائياً؟")) {
+        const revs = getReviews().filter(r => r.id !== id);
+        setReviews(revs);
+        showToast("تم حذف التعليق!");
+      }
+    }
+
+    // 8. سجل الواتساب والإحصائيات
+    function getWhatsAppLogs() {
+      return JSON.parse(localStorage.getItem("km_wa_click_logs")) || [];
+    }
+
+    function logWhatsAppClick(productId, productName, productPrice) {
+      const logs = getWhatsAppLogs();
+      logs.unshift({
+        time: new Date().toLocaleString('ar-SA'),
+        perfume: productName,
+        price: productPrice,
+        device: navigator.userAgent.includes("Mobi") ? "هاتف محمول" : "كمبيوتر / لابتوب"
+      });
+      localStorage.setItem("km_wa_click_logs", JSON.stringify(logs));
+
+      const prods = getProducts();
+      const target = prods.find(p => p.id === productId);
+      if (target) {
+        target.clicks = (target.clicks || 0) + 1;
+        localStorage.setItem("km_products", JSON.stringify(prods));
+      }
+      renderAnalytics();
+    }
+
+    function simulateWhatsAppClickDemo() {
+      const prods = getProducts();
+      if (prods.length === 0) {
+        showToast("يرجى إضافة عطر أولاً لتسجيل نقرة تجريبية!");
+        return;
+      }
+      const p = prods[0];
+      logWhatsAppClick(p.id, p.name, p.price);
+      showToast(`تم تسجيل نقرة تجريبية على: ${p.name}`);
+    }
+
+    function clearWhatsAppLogs() {
+      if (confirm("هل تريد تصفير سجل النقرات بالكامل؟")) {
+        localStorage.removeItem("km_wa_click_logs");
+        renderAnalytics();
+        showToast("تم تصفير سجل النقرات!");
+      }
+    }
+
+    function renderAnalytics() {
+      const products = getProducts();
+      const revs = getReviews();
+      const logs = getWhatsAppLogs();
+
+      const totalClicks = products.reduce((sum, p) => sum + (p.clicks || 0), 0);
+      const pendingRevs = revs.filter(r => !r.approved).length;
+
+      if (document.getElementById("statWhatsAppClicks")) document.getElementById("statWhatsAppClicks").innerText = totalClicks;
+      if (document.getElementById("statTotalProducts")) document.getElementById("statTotalProducts").innerText = products.length;
+      if (document.getElementById("statPendingReviews")) document.getElementById("statPendingReviews").innerText = pendingRevs;
+
+      const sorted = [...products].sort((a,b) => (b.clicks || 0) - (a.clicks || 0));
+      const tbody = document.getElementById("topClickedTable");
+      if (tbody) {
+        tbody.innerHTML = "";
+        const cats = getStoredCategories();
+
+        sorted.slice(0, 5).forEach(p => {
+          const catObj = cats.find(c => c.key === p.category);
+          const catName = catObj ? catObj.label : (p.category || 'بدون تصنيف');
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><strong>${p.name}</strong></td>
+            <td>${catName}</td>
+            <td>${p.price} ر.س</td>
+            <td style="color:var(--gold); font-weight:700;"><i class="fa-solid fa-arrow-pointer"></i> ${p.clicks || 0} نقرة</td>
+            <td>${p.stock === 'available' ? 'متوفر' : 'غير متوفر'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      const logTbody = document.getElementById("clickLogsTableBody");
+      if (logTbody) {
+        logTbody.innerHTML = "";
+        if (logs.length === 0) {
+          logTbody.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#aaa;'>لا توجد نقرات مسجلة حتى الآن</td></tr>";
+        } else {
+          logs.slice(0, 15).forEach(log => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${log.time}</td>
+              <td><strong>${log.perfume}</strong></td>
+              <td>${log.price} ر.س</td>
+              <td><span class="badge badge-tag">${log.device}</span></td>
+            `;
+            logTbody.appendChild(tr);
+          });
+        }
+      }
+    }
+
+    function exportProductsToCSV() {
+      const prods = getProducts();
+      if (prods.length === 0) { showToast("لا توجد منتجات لتصديرها!"); return; }
+      let csv = "\uFEFFالاسم,التصنيف,السعر,سعر_الخصم,المخزون,النقرات\n";
+      prods.forEach(p => {
+        csv += `"${p.name}","${p.category}","${p.price}","${p.oldPrice || ''}","${p.stock}","${p.clicks || 0}"\n`;
+      });
+      downloadFile(csv, "KM_Products.csv", "text/csv;charset=utf-8;");
+    }
+
+    function exportReviewsToCSV() {
+      const revs = getReviews();
+      if (revs.length === 0) { showToast("لا توجد تقييمات!"); return; }
+      let csv = "\uFEFFالاسم,التقييم,التعليق,رد_الإدارة,الحالة\n";
+      revs.forEach(r => {
+        csv += `"${r.name}","${r.rating}","${r.text}","${r.reply || ''}","${r.approved ? 'منشور' : 'معلق'}"\n`;
+      });
+      downloadFile(csv, "KM_Reviews.csv", "text/csv;charset=utf-8;");
+    }
+
+    function downloadFile(content, fileName, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function loadAllAdminData() {
+      renderProductsTable();
+      renderReviewsAdmin();
+      renderAnalytics();
+      loadBrandAndBannerSettings();
+      loadFeaturedEditionData();
+    }
+
+    window.onload = checkAuth;
+</script>
+</body>
+</html>
