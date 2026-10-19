@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- وسوم منع التخزين المؤقت (Anti-Cache Meta Tags) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <title>KM Parfums | دار العطور الملكية الفاخرة</title>
   <!-- تفعيل كلاس تمهيد أنيميشن الهيرو -->
   <script>document.documentElement.classList.add('hero-js');</script>
@@ -879,14 +885,14 @@
     <div class="nav-container">
       <a href="#" class="brand-logo">
         <span class="logo-sub" id="storeLogoSub">HAUTE PARFUMERIE</span>
-        <span class="logo-monogram" id="storeLogoMain">KM</span>
+        <span class="logo-monogram" id="storeLogoMain">𝗞&𝗠</span>
       </a>
 
       <nav>
         <ul class="nav-menu">
           <li><a href="#hero" class="active">الرئيسية</a></li>
           <li><a href="#collection">المجموعات الملكية</a></li>
-          <li><a href="#olfactory">هوية KM</a></li>
+          <li><a href="#olfactory">هوية 𝗞𝗠</a></li>
           <li><a href="#reviews">تجارب النخبة</a></li>
           <li><a href="admin.html" target="_blank" class="admin-pill-link"><i class="fa-solid fa-lock"></i> الإدارة</a></li>
         </ul>
@@ -910,9 +916,9 @@
         <div class="hero-tag">
           <i class="fa-solid fa-crown"></i> مستوحى من عزة النمر، وفخامة أثره
         </div>
-        <h1 class="hero-title" id="heroTitle">عطور تفوح بالهيبة، تخلد حضورك</h1>
+        <h1 class="hero-title" id="heroTitle">عطور تنطق بالسيادة والهيبة</h1>
         <p class="hero-desc" id="heroSubtitle">
-          في KM، نسكب عبير البرغندي المخملي ونفحات الجلد والكهرمان البرونزي في قوارير صُممت لتليق بأصحاب الأثر الخالد.
+          في 𝗞𝗠، نسكب عبير البرغندي المخملي ونفحات الجلد والكهرمان البرونزي في قوارير صُممت لتليق بأصحاب الأثر الخالد.
         </p>
         <div class="hero-btns">
           <a href="#collection" class="btn-pulse-gold">
@@ -925,7 +931,7 @@
       <div class="hero-visual">
         <div class="bottle-frame-card">
           <div class="bottle-inner-window">
-            <img id="heroImage" src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80" alt="عطر النمر KM">
+            <img id="heroImage" src="https://i.pinimg.com/736x/e0/cb/b5/e0cbb5c0236715397c3dbdbd4c2b524c.jpg" alt="عطر النمر KM">
           </div>
           <div class="bottle-bottom-tag">
             <span class="tag-price" id="heroTagPrice">1,250 ر.س</span>
@@ -1134,7 +1140,6 @@
     <span id="toastMsg">تم الإجراء بنجاح!</span>
   </div>
 
-  <!-- سكربت إدارة البيانات و Firebase السحابي -->
   <!-- ==========================================
        1. سكربت البيانات والمزامنة مع Firebase
        ========================================== -->
@@ -1221,7 +1226,7 @@
               return;
             }
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + Math.floor(distance / (1000 * 60 * 60 * 24)) * 24);
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const minutes = Math.floor((distance % (1000 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
             clock.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
           };
@@ -1599,3 +1604,5 @@
       onScroll();
     })();
   </script>
+</body>
+</html>
